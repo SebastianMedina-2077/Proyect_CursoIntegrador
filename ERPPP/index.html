@@ -16,10 +16,21 @@
 <body>
   <section class="login-view">
     <div class="login-card fade-in">
-      <img src="assets/logo.png" class="login-logo" alt="Mamma Tomato">
-      <h1>Mamma Tomato</h1>
-      <p>Sistema de gestión interno</p>
+      <div class="panel-left">
+        <span>ERP logistic</span>
+        <h1>Gestión de ventas e inventario</h1>
+        <span>Sistema personalizado para operaciones comerciales y control de stock</span>
+        <img src="assets/logo.png" class="login-logo" alt="Mamma Tomato">
+        <span><br>Impletado para Mamma Tomato Pizza & Focaccia</span>
+        <p>Desarrollado por SOFUTP</p>
+      </div>
+      <div class="panel-right">
+      <div class="login-heading">
+        <h2>Iniciar sesión</h2>
+      </div>
+
       <form id="loginForm" novalidate>
+         
         <div class="form-group">
           <label>Usuario</label>
           <div class="input-icon">
@@ -38,7 +49,10 @@
         </div>
         <div id="loginError" class="form-error hidden"><i class="fa-solid fa-circle-exclamation"></i> Credenciales inválidas</div>
         <button type="submit" class="btn btn-primary btn-block btn-lg"><i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión</button>
+        <div class="icon-login-sec"><i class="fa-solid fa-shield-halved"></i><span>Solo personal autorizado</span>
+        </div>
       </form>
+      </div>
     </div>
   </section>
   <script src="js/db.js"></script>
