@@ -3,120 +3,83 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mamma Tomato — Iniciar Sesión</title>
-  <meta name="description" content="Sistema de gestión ERP para Mamma Tomato Pizza & Focaccia">
+  <title>Mamma Tomato — Iniciar sesión</title>
+  <meta name="description" content="ERP Mamma Tomato — Sistema de gestión para pizzería">
   <link rel="icon" href="assets/logo.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
-  <section class="login-view">
-    <div class="login-card fade-in">
-      <img src="assets/logo.png" class="login-logo" alt="Mamma Tomato">
-      <h1>Mamma Tomato</h1>
-      <p>Sistema de gestión interno</p>
-      <form id="loginForm" novalidate>
-        <div class="form-group">
-          <label>Usuario</label>
-          <div class="input-icon">
-            <i class="fa-solid fa-user"></i>
-            <input type="text" id="loginUser" class="form-control" placeholder="Ingrese su usuario">
-          </div>
-          <div class="login-field-error" id="loginUserError"></div>
+  <div class="login-view">
+    <div class="card shadow-sm border-0 fade-in" style="width:100%;max-width:400px">
+      <div class="card-body p-4">
+        <div class="text-center mb-4">
+          <img src="assets/logo.png" alt="Mamma Tomato" width="64" height="64" class="rounded-3 mb-2">
+          <h4 class="fw-bold">Mamma Tomato</h4>
+          <small class="text-muted">Sistema ERP — Pizza & Focaccia</small>
         </div>
-        <div class="form-group">
-          <label>Contraseña</label>
-          <div class="input-icon">
-            <i class="fa-solid fa-lock"></i>
-            <input type="password" id="loginPass" class="form-control" placeholder="Ingrese su contraseña">
+        <form id="loginForm" novalidate>
+          <div class="mb-3">
+            <label class="form-label">Usuario</label>
+            <div class="input-group has-validation">
+              <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+              <input type="text" id="loginUser" class="form-control" placeholder="Ingrese su usuario" autocomplete="username">
+              <div class="invalid-feedback">Ingrese su usuario</div>
+            </div>
           </div>
-          <div class="login-field-error" id="loginPassError"></div>
-        </div>
-        <div id="loginError" class="form-error hidden"><i class="fa-solid fa-circle-exclamation"></i> Credenciales inválidas</div>
-        <button type="submit" class="btn btn-primary btn-block btn-lg"><i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión</button>
-      </form>
+          <div class="mb-3">
+            <label class="form-label">Contraseña</label>
+            <div class="input-group has-validation">
+              <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+              <input type="password" id="loginPass" class="form-control" placeholder="Ingrese su contraseña" autocomplete="current-password">
+              <div class="invalid-feedback">Ingrese su contraseña</div>
+            </div>
+          </div>
+          <div class="alert alert-danger d-none py-2 small" id="loginError">
+            <i class="fa-solid fa-circle-exclamation me-1"></i>Credenciales inválidas o usuario inactivo
+          </div>
+          <button type="submit" class="btn btn-brand w-100 py-2">
+            <i class="fa-solid fa-right-to-bracket me-1"></i>Iniciar sesión
+          </button>
+        </form>
+      </div>
     </div>
-  </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/db.js"></script>
+  <script src="js/validation.js"></script>
   <script>
-    const ROLE_DEFAULT = { admin: 'pages/dashboard.html', cajero: 'pages/pos.html', cocina: 'pages/cocina.html' };
+    const ROLE_DEFAULT = { admin:'pages/dashboard.html', cajero:'pages/pos.html', cocina:'pages/cocina.html' };
 
     document.addEventListener('DOMContentLoaded', async () => {
       await initDB();
+      // Si ya tiene sesión, redirigir
       const s = JSON.parse(sessionStorage.getItem('mt_session'));
       if (s) { window.location.href = ROLE_DEFAULT[s.rol] || 'pages/dashboard.html'; return; }
 
-      const form = document.getElementById('loginForm');
-
-      form.addEventListener('submit', async e => {
+      document.getElementById('loginForm').addEventListener('submit', async e => {
         e.preventDefault();
+        document.getElementById('loginError').classList.add('d-none');
 
-        const userField = document.getElementById('loginUser');
-        const passField = document.getElementById('loginPass');
-        const userError = document.getElementById('loginUserError');
-        const passError = document.getElementById('loginPassError');
-        const loginError = document.getElementById('loginError');
-        let valid = true;
+        if (!validateForm('loginForm', {
+          loginUser: [V.required('Ingrese su usuario'), V.minLength(3)],
+          loginPass: [V.required('Ingrese su contraseña'), V.minLength(4)]
+        })) return;
 
-        userField.classList.remove('is-invalid');
-        passField.classList.remove('is-invalid');
-        userError.textContent = '';
-        passError.textContent = '';
-        loginError.classList.add('hidden');
-
-        const user = userField.value.trim().toLowerCase();
-        const pass = passField.value;
-
-        if (!user) {
-          userField.classList.add('is-invalid');
-          userError.textContent = 'Ingrese su usuario';
-          valid = false;
-        } else if (user.length < 3) {
-          userField.classList.add('is-invalid');
-          userError.textContent = 'Mínimo 3 caracteres';
-          valid = false;
-        }
-
-        if (!pass) {
-          passField.classList.add('is-invalid');
-          passError.textContent = 'Ingrese su contraseña';
-          valid = false;
-        } else if (pass.length < 4) {
-          passField.classList.add('is-invalid');
-          passError.textContent = 'Mínimo 4 caracteres';
-          valid = false;
-        }
-
-        if (!valid) return;
-
+        const user = document.getElementById('loginUser').value.trim().toLowerCase();
+        const pass = document.getElementById('loginPass').value;
         const usuarios = await dbGetAll('usuarios');
         const found = usuarios.find(u => u.username === user && u.password === pass && u.estado === 'activo');
 
-        if (!found) {
-          loginError.classList.remove('hidden');
-          return;
-        }
+        if (!found) { document.getElementById('loginError').classList.remove('d-none'); return; }
 
         sessionStorage.setItem('mt_session', JSON.stringify({
-          id: found.id, username: found.username, rol: found.rol,
-          nombre: found.nombre, codigo: found.codigo || ''
+          id:found.id, username:found.username, rol:found.rol, nombre:found.nombre, codigo:found.codigo||''
         }));
         window.location.href = ROLE_DEFAULT[found.rol] || 'pages/dashboard.html';
-      });
-
-      document.getElementById('loginUser').addEventListener('input', () => {
-        document.getElementById('loginUser').classList.remove('is-invalid');
-        document.getElementById('loginUserError').textContent = '';
-        document.getElementById('loginError').classList.add('hidden');
-      });
-      document.getElementById('loginPass').addEventListener('input', () => {
-        document.getElementById('loginPass').classList.remove('is-invalid');
-        document.getElementById('loginPassError').textContent = '';
-        document.getElementById('loginError').classList.add('hidden');
       });
     });
   </script>

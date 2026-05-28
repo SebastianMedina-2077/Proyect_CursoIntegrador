@@ -1,44 +1,9 @@
-/* Cocina */
+/* cocina.css — Panel cocina */
+
 .kitchen-board {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 16px;
 }
-.kitchen-ticket {
-  background: #fff;
-  border: 1px solid #e2e5ea;
-  border-radius: 12px;
-  padding: 16px;
-  border-left: 4px solid #f59e0b;
-}
-.kitchen-ticket.preparando {
-  border-left-color: #10b981;
-}
-.kitchen-ticket .card-header {
-  margin-bottom: 10px;
-}
-.ticket-meta {
-  font-size: 12px;
-  color: #6b7280;
-  margin-bottom: 4px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.ticket-items {
-  list-style: none;
-  padding: 10px 0;
-  margin: 0;
-  border-top: 1px solid #e2e5ea;
-  border-bottom: 1px solid #e2e5ea;
-}
-.ticket-items li {
-  padding: 4px 0;
-  font-size: 13px;
-}
-.ticket-items li small {
-  color: #6b7280;
-}
-.ticket-actions {
-  margin-top: 12px;
-}
+.kitchen-ticket { border-left: 4px solid #ffc107; }
+.kitchen-ticket.preparando { border-left-color: #198754; }

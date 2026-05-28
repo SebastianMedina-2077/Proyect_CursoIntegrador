@@ -1,9 +1,9 @@
-/* Templates - Generadores HTML reutilizables */
+/* templates.js — Generadores HTML dinámicos (Bootstrap 5) */
 
 function tplLayout(session, menu, info) {
   const navItems = menu.map(m =>
-    `<a class="nav-item ${m.key === info.key ? 'active' : ''}" href="${m.href}">` +
-    `<i class="fa-solid ${m.icon}"></i> <span>${m.label}</span></a>`
+    `<a class="nav-link sidebar-link ${m.key === info.key ? 'active' : ''}" href="${m.href}">
+      <i class="fa-solid ${m.icon}"></i> <span>${m.label}</span></a>`
   ).join('');
 
   return `
@@ -11,8 +11,8 @@ function tplLayout(session, menu, info) {
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <aside class="sidebar open" id="sidebar">
       <div class="sidebar-brand">
-        <img src="../assets/logo.png" class="sidebar-logo" alt="MT">
-        <div class="sidebar-brand-text"><strong>Mamma Tomato</strong><span>ERP System</span></div>
+        <img src="../assets/logo.png" alt="MT">
+        <div><strong class="d-block">Mamma Tomato</strong><small class="text-muted">ERP System</small></div>
       </div>
       <nav class="sidebar-nav">${navItems}</nav>
       <div class="sidebar-footer">
@@ -22,30 +22,31 @@ function tplLayout(session, menu, info) {
           <div class="toggle-switch active" id="toggleSwitch"><div class="toggle-knob"></div></div>
         </div>
         <button class="sidebar-option" onclick="handleLogout()">
-          <i class="fa-solid fa-right-from-bracket"></i>
-          <span>Cerrar sesión</span>
+          <i class="fa-solid fa-right-from-bracket"></i><span>Cerrar sesión</span>
         </button>
       </div>
     </aside>
     <main class="content" id="mainContent">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button class="btn-menu" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
-          <div><h2>${info.title || ''}</h2><p>${info.sub || ''}</p></div>
-        </div>
-        <div class="topbar-actions">
-          <span class="user-badge"><i class="fa-solid fa-circle-user"></i> ${session.nombre}</span>
+      <header class="card mb-3">
+        <div class="card-body py-2 px-3 d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center gap-3">
+            <button class="btn btn-light btn-sm" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
+            <div><h5 class="mb-0">${info.title || ''}</h5><small class="text-muted">${info.sub || ''}</small></div>
+          </div>
+          <span class="badge bg-brand-light text-brand-dark rounded-pill px-3 py-2">
+            <i class="fa-solid fa-circle-user me-1"></i>${session.nombre}
+          </span>
         </div>
       </header>
-      <section id="moduleContent" class="module-content fade-in"></section>
+      <section id="moduleContent" class="fade-in"></section>
     </main>
     <footer class="status-bar">
-      <div class="status-left">
+      <div class="d-flex align-items-center gap-2">
         <span>Cajero: <strong>${session.nombre}</strong></span>
-        <span class="status-sep">|</span>
+        <span class="opacity-25">|</span>
         <span>Código: <strong>${session.codigo || session.username.toUpperCase()}</strong></span>
       </div>
-      <div class="status-right" id="statusRight">
+      <div class="d-flex align-items-center gap-2" id="statusRight">
         <span>Sistema en línea</span>
         <i class="fa-solid fa-circle status-dot online"></i>
       </div>
@@ -53,81 +54,76 @@ function tplLayout(session, menu, info) {
   </section>`;
 }
 
-function tplModal(id, sizeClass, title, bodyId, footerHTML) {
+function tplStatCard(icon, colorClass, label, value, delay) {
+  const colors = { '':'bg-brand-light text-brand', warn:'bg-warning-subtle text-warning', success:'bg-success-subtle text-success', danger:'bg-danger-subtle text-danger' };
   return `
-  <div class="modal-overlay" id="${id}"><div class="modal-box ${sizeClass}">
-    <div class="modal-header">
-      <h4>${title}</h4>
-      <button class="modal-close" onclick="closeModal('${id}')"><i class="fa-solid fa-xmark"></i></button>
+  <div class="card stagger p-3" style="animation-delay:${delay}ms">
+    <div class="d-flex align-items-center gap-3">
+      <div class="stat-icon ${colors[colorClass]||colors['']}"><i class="fa-solid ${icon}"></i></div>
+      <div><small class="text-muted">${label}</small><strong class="d-block fs-5">${value}</strong></div>
     </div>
-    <div class="modal-body" ${bodyId ? `id="${bodyId}"` : ''}></div>
-    <div class="modal-footer">${footerHTML}</div>
-  </div></div>`;
-}
-
-function tplStatCard(icon, iconClass, label, value, delay) {
-  return `
-  <div class="stat-card stagger" style="animation-delay:${delay}ms">
-    <div class="stat-icon ${iconClass}"><i class="fa-solid ${icon}"></i></div>
-    <div class="stat-info"><span>${label}</span><strong>${value}</strong></div>
   </div>`;
-}
-
-function tplTable(headers, bodyHTML, bodyId) {
-  const ths = headers.map(h => `<th>${h}</th>`).join('');
-  return `
-  <div class="table-wrap"><table>
-    <thead><tr>${ths}</tr></thead>
-    <tbody ${bodyId ? `id="${bodyId}"` : ''}>${bodyHTML}</tbody>
-  </table></div>`;
 }
 
 function tplBadge(text, type) {
   return `<span class="badge ${type}">${text}</span>`;
 }
 
+function tplTable(headers, bodyHTML, bodyId) {
+  return `
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light"><tr>${headers.map(h => `<th class="small text-uppercase text-muted">${h}</th>`).join('')}</tr></thead>
+      <tbody ${bodyId ? `id="${bodyId}"` : ''}>${bodyHTML}</tbody>
+    </table>
+  </div>`;
+}
+
 function tplProductCard(p, index) {
   return `
-  <div class="product-card stagger" style="animation-delay:${index * 30}ms">
-    <div class="product-tag">${p.categoria}</div>
-    <div class="product-name">${p.nombre}</div>
-    <div class="product-price">S/ ${p.precio.toFixed(2)}</div>
-    <div class="product-actions">
-      <button class="btn btn-sm btn-primary" onclick="quickAdd(${p.id})"><i class="fa-solid fa-plus"></i> Agregar</button>
-      <button class="btn btn-sm btn-outline" onclick="openPersonalizar(${p.id})"><i class="fa-solid fa-sliders"></i> Detalles</button>
+  <div class="card product-card stagger" style="animation-delay:${index*30}ms">
+    <div class="card-body p-2">
+      <small class="text-muted text-uppercase" style="font-size:10px">${p.categoria}</small>
+      <h6 class="card-title mb-1 text-truncate">${p.nombre}</h6>
+      <div class="fw-bold text-brand-dark mb-2">S/ ${p.precio.toFixed(2)}</div>
+      <div class="d-flex gap-1">
+        <button class="btn btn-brand btn-sm flex-grow-1" onclick="quickAdd(${p.id})"><i class="fa-solid fa-plus"></i> Agregar</button>
+        <button class="btn btn-outline-secondary btn-sm" onclick="openPersonalizar(${p.id})" title="Personalizar"><i class="fa-solid fa-sliders"></i></button>
+      </div>
     </div>
   </div>`;
 }
 
 function tplCartItem(item, i) {
   let mods = '';
-  if (item.quitados.length) mods += `<span class="cart-mod">Sin: ${item.quitados.join(', ')}</span>`;
-  if (item.extras.length) mods += `<span class="cart-mod">+${item.extras.map(e => e.nombre).join(', ')}</span>`;
-  if (item.notas) mods += `<span class="cart-mod">${item.notas}</span>`;
+  if (item.quitados.length) mods += `<small class="d-block text-muted">Sin: ${item.quitados.join(', ')}</small>`;
+  if (item.extras.length) mods += `<small class="d-block text-muted">+${item.extras.map(e=>e.nombre).join(', ')}</small>`;
+  if (item.notas) mods += `<small class="d-block text-muted">${item.notas}</small>`;
 
   return `
-  <div class="cart-item slide-in" style="animation-delay:${i * 50}ms">
-    <div class="cart-item-info"><strong>${item.nombre}</strong>${mods}</div>
-    <div class="cart-item-controls">
-      <div class="qty-inline">
-        <button onclick="cartQty(${i},-1)"><i class="fa-solid fa-minus"></i></button>
-        <span>${item.cantidad}</span>
-        <button onclick="cartQty(${i},1)"><i class="fa-solid fa-plus"></i></button>
+  <div class="d-flex justify-content-between align-items-start py-2 border-bottom slide-in" style="animation-delay:${i*50}ms">
+    <div class="flex-grow-1">
+      <strong class="d-block small">${item.nombre}</strong>${mods}
+    </div>
+    <div class="d-flex align-items-center gap-2 ms-2">
+      <div class="btn-group btn-group-sm">
+        <button class="btn btn-outline-secondary" onclick="cartQty(${i},-1)"><i class="fa-solid fa-minus"></i></button>
+        <span class="btn btn-outline-secondary disabled">${item.cantidad}</span>
+        <button class="btn btn-outline-secondary" onclick="cartQty(${i},1)"><i class="fa-solid fa-plus"></i></button>
       </div>
-      <span class="cart-item-price">S/ ${(item.precio * item.cantidad).toFixed(2)}</span>
-      <button class="btn-icon danger" onclick="cartRemove(${i})"><i class="fa-solid fa-trash"></i></button>
+      <span class="fw-semibold small text-nowrap">S/ ${(item.precio * item.cantidad).toFixed(2)}</span>
+      <button class="btn btn-sm btn-outline-danger" onclick="cartRemove(${i})"><i class="fa-solid fa-trash"></i></button>
     </div>
   </div>`;
 }
 
 function tplReceipt(p) {
-  const nro = `BOL-${new Date().getFullYear()}-${String(p.id).padStart(6, '0')}`;
+  const nro = `BOL-${new Date().getFullYear()}-${String(p.id).padStart(6,'0')}`;
   const mesa = p.mesa === 0 ? 'Para Llevar' : `Mesa ${p.mesa}`;
-
   const items = p.items.map(it => {
-    let h = `<div class="receipt-item"><span class="ri-qty">${it.cantidad}</span><span class="ri-name">${it.nombre}</span><span class="ri-price">S/ ${(it.precio * it.cantidad).toFixed(2)}</span></div>`;
+    let h = `<div class="receipt-item"><span class="ri-qty">${it.cantidad}</span><span class="ri-name">${it.nombre}</span><span class="ri-price">S/ ${(it.precio*it.cantidad).toFixed(2)}</span></div>`;
     if (it.quitados?.length) h += `<div class="receipt-mod">  -Sin: ${it.quitados.join(', ')}</div>`;
-    if (it.extras?.length) h += `<div class="receipt-mod">  +${it.extras.map(e => e.nombre).join(', ')}</div>`;
+    if (it.extras?.length) h += `<div class="receipt-mod">  +${it.extras.map(e=>e.nombre).join(', ')}</div>`;
     if (it.notas) h += `<div class="receipt-mod">  ${it.notas}</div>`;
     return h;
   }).join('');
@@ -142,7 +138,7 @@ function tplReceipt(p) {
   </div>
   <div class="receipt-divider"></div>
   <div class="receipt-meta">
-    <div>BOLETA DE VENTA</div><div>Nro: ${nro}</div><div>Fecha: ${p.fecha}</div>
+    <div>BOLETA DE VENTA</div><div>Nro: ${nro}</div><div>Fecha: ${formatDate(p.fecha)}</div>
     <div>Cajero: ${p.cajero}</div><div>${mesa}</div><div>Cliente: ${p.cliente}</div>
   </div>
   <div class="receipt-divider"></div>
@@ -161,56 +157,4 @@ function tplReceipt(p) {
     <div>Gracias por su preferencia</div>
     <div>www.mammatomato.com.pe</div>
   </div>`;
-}
-
-function tplPOSModals() {
-  return `
-  <div class="modal-overlay" id="modalPersonalizar"><div class="modal-box modal-md">
-    <div class="modal-header"><h4 id="mpNombre"></h4><button class="modal-close" onclick="closeModal('modalPersonalizar')"><i class="fa-solid fa-xmark"></i></button></div>
-    <div class="modal-body" id="mpBody"></div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modalPersonalizar')">Cancelar</button>
-      <button class="btn btn-primary" id="mpAgregar">Agregar al pedido</button>
-    </div>
-  </div></div>
-
-  <div class="modal-overlay" id="modalCliente"><div class="modal-box modal-md">
-    <div class="modal-header"><h4>Datos del pedido</h4><button class="modal-close" onclick="closeModal('modalCliente')"><i class="fa-solid fa-xmark"></i></button></div>
-    <div class="modal-body">
-      <form id="formCliente" class="needs-validation" novalidate>
-        <div class="form-group"><label>Nombre del cliente</label><input type="text" id="cliNombre" class="form-control" required><div class="invalid-feedback">Ingrese el nombre del cliente</div></div>
-        <div class="form-group"><label>Número de mesa</label><input type="number" id="cliMesa" class="form-control" min="0" required><small class="form-hint">Ingrese 0 para Para Llevar</small><div id="cliMesaBadge"></div><div class="invalid-feedback">Ingrese el número de mesa</div></div>
-        <div class="form-group"><label>Teléfono <span class="text-muted">(opcional)</span></label><input type="tel" id="cliTelefono" class="form-control"></div>
-        <div class="form-group"><label>Método de pago</label>
-          <div class="radio-group">
-            <label class="radio-label"><input type="radio" name="tipoPago" value="efectivo" checked> <i class="fa-solid fa-money-bill-wave"></i> Efectivo</label>
-            <label class="radio-label"><input type="radio" name="tipoPago" value="yape"> <i class="fa-solid fa-mobile-screen"></i> Yape</label>
-            <label class="radio-label"><input type="radio" name="tipoPago" value="tarjeta"> <i class="fa-solid fa-credit-card"></i> Tarjeta</label>
-          </div>
-        </div>
-        <div class="order-summary"><h5>Resumen</h5><div id="cliResumen"></div><div class="cart-total"><span>Total</span><strong id="cliTotal"></strong></div></div>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modalCliente')">Cancelar</button>
-      <button class="btn btn-primary" id="btnConfirmarCliente"><i class="fa-solid fa-check"></i> Confirmar Pedido</button>
-    </div>
-  </div></div>
-
-  <div class="modal-overlay" id="modalUpsell"><div class="modal-box modal-lg">
-    <div class="modal-header"><h4><i class="fa-solid fa-plus-circle"></i> ¿Desea agregar algo más?</h4><button class="modal-close" onclick="skipUpsell()"><i class="fa-solid fa-xmark"></i></button></div>
-    <div class="modal-body"><div id="upsellGrid" class="upsell-grid"></div><div id="upsellAdded" class="upsell-added"></div></div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="skipUpsell()">No, gracias</button>
-      <button class="btn btn-primary" onclick="confirmUpsell()"><i class="fa-solid fa-check"></i> Confirmar y Pagar</button>
-    </div>
-  </div></div>
-
-  <div class="modal-overlay" id="modalRecibo"><div class="modal-box modal-receipt">
-    <div id="reciboContent" class="receipt"></div>
-    <div class="modal-footer receipt-actions">
-      <button class="btn btn-outline" onclick="closeReceipt()"><i class="fa-solid fa-xmark"></i> Cerrar</button>
-      <button class="btn btn-primary" onclick="printReceipt()"><i class="fa-solid fa-print"></i> Imprimir</button>
-    </div>
-  </div></div>`;
 }

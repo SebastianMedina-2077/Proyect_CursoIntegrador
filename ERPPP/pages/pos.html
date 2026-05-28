@@ -5,25 +5,140 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mamma Tomato — Punto de Venta</title>
   <link rel="icon" href="../assets/logo.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Barcode+128&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="../css/pos.css">
   <link rel="stylesheet" href="../css/receipt.css">
 </head>
 <body>
   <div id="app"></div>
+
+  <!-- Modal: Personalizar producto -->
+  <div class="modal fade" id="modalPersonalizar" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 class="modal-title" id="mpNombre"></h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="mpBody"></div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn btn-brand" id="mpAgregar"><i class="fa-solid fa-cart-plus me-1"></i>Agregar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Datos del cliente -->
+  <div class="modal fade" id="modalCliente" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 class="modal-title"><i class="fa-solid fa-user-pen me-2"></i>Datos del pedido</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formCliente" novalidate>
+            <div class="mb-3">
+              <label class="form-label">Nombre del cliente</label>
+              <input type="text" id="cliNombre" class="form-control" placeholder="Nombre completo">
+              <div class="invalid-feedback">Requerido</div>
+            </div>
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label">N° Mesa <small class="text-muted">(0 = llevar)</small></label>
+                <input type="number" id="cliMesa" class="form-control" min="0" value="0">
+                <div class="invalid-feedback">Requerido</div>
+                <div id="cliMesaBadge"></div>
+              </div>
+              <div class="col-6">
+                <label class="form-label">Teléfono <small class="text-muted">(opcional)</small></label>
+                <input type="tel" id="cliTelefono" class="form-control" placeholder="9XXXXXXXX">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Método de pago</label>
+              <div class="d-flex gap-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="tipoPago" value="efectivo" id="pagoEfectivo" checked>
+                  <label class="form-check-label" for="pagoEfectivo">Efectivo</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="tipoPago" value="tarjeta" id="pagoTarjeta">
+                  <label class="form-check-label" for="pagoTarjeta">Tarjeta</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="tipoPago" value="yape" id="pagoYape">
+                  <label class="form-check-label" for="pagoYape">Yape/Plin</label>
+                </div>
+              </div>
+            </div>
+            <div class="border-top pt-3">
+              <h6>Resumen</h6>
+              <div id="cliResumen" class="mb-2"></div>
+              <div class="d-flex justify-content-between fw-bold fs-5 border-top pt-2">
+                <span>Total</span><span class="text-brand-dark" id="cliTotal">S/ 0.00</span>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn btn-brand" id="btnConfirmarCliente"><i class="fa-solid fa-check me-1"></i>Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Upsell -->
+  <div class="modal fade" id="modalUpsell" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 class="modal-title"><i class="fa-solid fa-star me-2 text-warning"></i>¿Desea agregar algo más?</h6>
+        </div>
+        <div class="modal-body">
+          <div class="upsell-grid" id="upsellGrid"></div>
+          <div id="upsellAdded"></div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="skipUpsell()">No, gracias</button>
+          <button class="btn btn-brand" onclick="confirmUpsell()"><i class="fa-solid fa-check me-1"></i>Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Recibo -->
+  <div class="modal fade modal-receipt" id="modalRecibo" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body p-0">
+          <div class="receipt" id="reciboContent"></div>
+        </div>
+        <div class="modal-footer justify-content-between">
+          <button class="btn btn-secondary" onclick="closeReceipt()">Cerrar</button>
+          <button class="btn btn-brand" onclick="printReceipt()"><i class="fa-solid fa-print me-1"></i>Imprimir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../js/db.js"></script>
+  <script src="../js/validation.js"></script>
   <script src="../js/templates.js"></script>
   <script src="../js/app.js"></script>
-  <script src="../js/validation.js"></script>
   <script src="../js/pos.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       await initDB();
-      const s = requireAuth();
+      const s = requireAuth('pos');
       if (!s) return;
       buildLayout(s, 'pos');
       renderPOS();
