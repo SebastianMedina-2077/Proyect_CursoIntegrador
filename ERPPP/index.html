@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/main.css">
 </head>
+
 <body>
   <div class="login-view">
     <div class="card shadow-sm border-0 fade-in" style="width:100%;max-width:400px">
@@ -25,7 +27,8 @@
             <label class="form-label">Usuario</label>
             <div class="input-group has-validation">
               <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
-              <input type="text" id="loginUser" class="form-control" placeholder="Ingrese su usuario" autocomplete="username">
+              <input type="text" id="loginUser" class="form-control" placeholder="Ingrese su usuario"
+                autocomplete="username">
               <div class="invalid-feedback">Ingrese su usuario</div>
             </div>
           </div>
@@ -33,7 +36,8 @@
             <label class="form-label">Contraseña</label>
             <div class="input-group has-validation">
               <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
-              <input type="password" id="loginPass" class="form-control" placeholder="Ingrese su contraseña" autocomplete="current-password">
+              <input type="password" id="loginPass" class="form-control" placeholder="Ingrese su contraseña"
+                autocomplete="current-password">
               <div class="invalid-feedback">Ingrese su contraseña</div>
             </div>
           </div>
@@ -52,7 +56,7 @@
   <script src="js/db.js"></script>
   <script src="js/validation.js"></script>
   <script>
-    const ROLE_DEFAULT = { admin:'pages/dashboard.html', cajero:'pages/pos.html', cocina:'pages/cocina.html' };
+    const ROLE_DEFAULT = { admin: 'pages/dashboard.html', cajero: 'pages/pos.html', cocina: 'pages/cocina.html' };
 
     document.addEventListener('DOMContentLoaded', async () => {
       await initDB();
@@ -77,11 +81,12 @@
         if (!found) { document.getElementById('loginError').classList.remove('d-none'); return; }
 
         sessionStorage.setItem('mt_session', JSON.stringify({
-          id:found.id, username:found.username, rol:found.rol, nombre:found.nombre, codigo:found.codigo||''
+          id: found.id, username: found.username, rol: found.rol, nombre: found.nombre, codigo: found.codigo || ''
         }));
         window.location.href = ROLE_DEFAULT[found.rol] || 'pages/dashboard.html';
       });
     });
   </script>
 </body>
+
 </html>
