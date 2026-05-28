@@ -12,8 +12,87 @@
 </head>
 <body>
   <div id="app"></div>
-  <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
 
+  <template id="tplInventario">
+    <div class="row g-3 mb-3" id="invStats"></div>
+    <div class="row g-3 mb-3">
+      <div class="col-lg-5">
+        <div class="card">
+          <div class="card-header"><h6 class="mb-0">Registrar movimiento</h6></div>
+          <div class="card-body">
+            <form id="formMov" novalidate>
+              <div class="mb-3">
+                <label class="form-label">Tipo</label>
+                <select id="movTipo" class="form-select">
+                  <option value="entrada">Entrada</option>
+                  <option value="salida">Salida</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Insumo</label>
+                <select id="movInsumo" class="form-select"></select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Cantidad</label>
+                <input type="number" step="0.01" min="0.01" id="movCantidad" class="form-control" placeholder="Ej: 5">
+                <div class="invalid-feedback">Ingrese la cantidad</div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Motivo</label>
+                <input type="text" id="movMotivo" class="form-control" placeholder="Compra, producción, merma...">
+                <div class="invalid-feedback">Ingrese el motivo</div>
+              </div>
+              <button type="submit" class="btn btn-brand w-100"><i class="fa-solid fa-plus"></i> Registrar</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <div class="card">
+          <div class="card-header"><h6 class="mb-0">Stock actual</h6></div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th class="small text-uppercase text-muted">Código</th>
+                    <th class="small text-uppercase text-muted">Insumo</th>
+                    <th class="small text-uppercase text-muted">Stock</th>
+                    <th class="small text-uppercase text-muted">Unidad</th>
+                    <th class="small text-uppercase text-muted">Mínimo</th>
+                    <th class="small text-uppercase text-muted">Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="stockBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h6 class="mb-0">Historial de movimientos</h6></div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th class="small text-uppercase text-muted">Fecha</th>
+                <th class="small text-uppercase text-muted">Tipo</th>
+                <th class="small text-uppercase text-muted">Insumo</th>
+                <th class="small text-uppercase text-muted">Cantidad</th>
+                <th class="small text-uppercase text-muted">Usuario</th>
+                <th class="small text-uppercase text-muted">Motivo</th>
+              </tr>
+            </thead>
+            <tbody id="movBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../js/db.js"></script>
   <script src="../js/validation.js"></script>

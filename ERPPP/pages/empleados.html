@@ -12,8 +12,170 @@
 </head>
 <body>
   <div id="app"></div>
-  <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
 
+  <!-- Tabs -->
+  <template id="tplEmpTabs">
+    <ul class="nav nav-pills mb-3">
+      <li class="nav-item"><button class="nav-link" id="tabEmpleados"><i class="fa-solid fa-users me-1"></i>Empleados</button></li>
+      <li class="nav-item"><button class="nav-link" id="tabUsuarios"><i class="fa-solid fa-user-shield me-1"></i>Usuarios</button></li>
+    </ul>
+    <div id="empContent"></div>
+  </template>
+
+  <!-- Formulario Empleados -->
+  <template id="tplEmpForm">
+    <div class="row g-3">
+      <div class="col-lg-5">
+        <div class="card">
+          <div class="card-header"><h6 class="mb-0" id="empFormTitle">Registrar empleado</h6></div>
+          <div class="card-body">
+            <form id="formEmp" novalidate>
+              <div class="row g-2">
+                <div class="col-6 mb-2">
+                  <label class="form-label">Nombre</label>
+                  <input type="text" id="empNombre" class="form-control">
+                  <div class="invalid-feedback">Requerido</div>
+                </div>
+                <div class="col-6 mb-2">
+                  <label class="form-label">Apellido</label>
+                  <input type="text" id="empApellido" class="form-control">
+                  <div class="invalid-feedback">Requerido</div>
+                </div>
+              </div>
+              <div class="row g-2">
+                <div class="col-6 mb-2">
+                  <label class="form-label">DNI</label>
+                  <input type="text" id="empDni" class="form-control" maxlength="8">
+                  <div class="invalid-feedback">DNI inválido</div>
+                </div>
+                <div class="col-6 mb-2">
+                  <label class="form-label">Teléfono</label>
+                  <input type="tel" id="empTel" class="form-control">
+                  <div class="invalid-feedback">Teléfono inválido</div>
+                </div>
+              </div>
+              <div class="row g-2">
+                <div class="col-6 mb-2">
+                  <label class="form-label">Cargo</label>
+                  <select id="empCargo" class="form-select">
+                    <option value="">Seleccionar</option>
+                    <option>Administrador</option><option>Cajero</option><option>Cocina</option><option>Repartidor</option>
+                  </select>
+                  <div class="invalid-feedback">Requerido</div>
+                </div>
+                <div class="col-6 mb-2">
+                  <label class="form-label">Estado</label>
+                  <select id="empEstado" class="form-select">
+                    <option value="activo">Activo</option><option value="inactivo">Inactivo</option>
+                  </select>
+                </div>
+              </div>
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-brand flex-grow-1" id="empSubmitBtn"><i class="fa-solid fa-plus"></i> Guardar</button>
+                <button type="button" class="btn btn-outline-secondary d-none" id="empCancelBtn">Cancelar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <div class="card">
+          <div class="card-header"><h6 class="mb-0">Empleados registrados</h6></div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th class="small text-uppercase text-muted">Nombre</th>
+                    <th class="small text-uppercase text-muted">DNI</th>
+                    <th class="small text-uppercase text-muted">Teléfono</th>
+                    <th class="small text-uppercase text-muted">Cargo</th>
+                    <th class="small text-uppercase text-muted">Estado</th>
+                    <th class="small text-uppercase text-muted">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="empTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- Formulario Usuarios -->
+  <template id="tplUsrForm">
+    <div class="row g-3">
+      <div class="col-lg-5">
+        <div class="card">
+          <div class="card-header"><h6 class="mb-0" id="usrFormTitle">Registrar usuario</h6></div>
+          <div class="card-body">
+            <form id="formUsr" novalidate>
+              <div class="mb-2">
+                <label class="form-label">Username</label>
+                <input type="text" id="usrUsername" class="form-control">
+                <div class="invalid-feedback">Requerido</div>
+              </div>
+              <div class="mb-2">
+                <label class="form-label">Contraseña</label>
+                <input type="password" id="usrPassword" class="form-control">
+                <div class="invalid-feedback">Requerido</div>
+              </div>
+              <div class="mb-2">
+                <label class="form-label">Código</label>
+                <input type="text" id="usrCodigo" class="form-control" placeholder="Ej: CAJ-002">
+                <div class="invalid-feedback">Requerido</div>
+              </div>
+              <div class="mb-2">
+                <label class="form-label">Rol</label>
+                <select id="usrRol" class="form-select">
+                  <option value="">Seleccionar</option>
+                  <option value="admin">Administrador</option><option value="cajero">Cajero</option><option value="cocina">Cocina</option>
+                </select>
+                <div class="invalid-feedback">Requerido</div>
+              </div>
+              <div class="mb-2">
+                <label class="form-label">Empleado asociado</label>
+                <select id="usrEmpleado" class="form-select"><option value="">Ninguno</option></select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Estado</label>
+                <select id="usrEstado" class="form-select"><option value="activo">Activo</option><option value="inactivo">Inactivo</option></select>
+              </div>
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-brand flex-grow-1" id="usrSubmitBtn"><i class="fa-solid fa-plus"></i> Guardar</button>
+                <button type="button" class="btn btn-outline-secondary d-none" id="usrCancelBtn">Cancelar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <div class="card">
+          <div class="card-header"><h6 class="mb-0">Usuarios del sistema</h6></div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th class="small text-uppercase text-muted">Usuario</th>
+                    <th class="small text-uppercase text-muted">Código</th>
+                    <th class="small text-uppercase text-muted">Rol</th>
+                    <th class="small text-uppercase text-muted">Nombre</th>
+                    <th class="small text-uppercase text-muted">Estado</th>
+                    <th class="small text-uppercase text-muted">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="usrTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../js/db.js"></script>
   <script src="../js/validation.js"></script>

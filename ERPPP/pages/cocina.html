@@ -13,8 +13,19 @@
 </head>
 <body>
   <div id="app"></div>
-  <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
 
+  <template id="tplCocina">
+    <div class="kitchen-board" id="cocinaBoard"></div>
+  </template>
+
+  <template id="tplCocinaEmpty">
+    <div class="text-center text-muted py-5 w-100">
+      <i class="fa-solid fa-circle-check fs-1 opacity-25 d-block mb-2"></i>
+      <p>Sin pedidos activos</p>
+    </div>
+  </template>
+
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../js/db.js"></script>
   <script src="../js/templates.js"></script>
@@ -27,7 +38,6 @@
       if (!s) return;
       buildLayout(s, 'cocina');
       renderCocina();
-      // Auto-refresh cada 30s
       setInterval(renderCocina, 30000);
     });
   </script>

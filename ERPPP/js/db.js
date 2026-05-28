@@ -1,4 +1,16 @@
-/* db.js — Capa de datos IndexedDB (temporal, migrar a API REST + Spring Boot) */
+/*
+  db.js — Capa de datos (IndexedDB)
+
+  MIGRACIÓN A SPRING BOOT:
+  Reemplazar el contenido de las funciones CRUD por fetch().
+  La interfaz (dbGetAll, dbGet, dbAdd, dbPut, dbDelete) NO cambia,
+  así ningún módulo necesita modificarse.
+
+  Ejemplo:
+    async function dbGetAll(store) {
+      return fetch(`/api/${store}`, { headers: authHeaders() }).then(r => r.json());
+    }
+*/
 
 const DB_NAME = 'MammaTomatoDB';
 const DB_VERSION = 1;
